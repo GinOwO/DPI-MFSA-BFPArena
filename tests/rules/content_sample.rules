@@ -1,0 +1,12 @@
+# Sample rules with content: and pcre: fields for V4 AC+MFSA testing
+# Path traversal
+alert tcp any any -> any 80 (content:"../"; pcre:"/\.\.\//"; sid:2001;)
+
+# SQL injection
+alert tcp any any -> any 80 (content:"SELECT"; nocase; pcre:"/UNION\s+SELECT/"; sid:2002;)
+
+# XSS script tag
+alert tcp any any -> any 80 (content:"<script"; pcre:"/<script/"; sid:2003;)
+
+# Shell command injection (no content keyword always-run)
+alert tcp any any -> any any (pcre:"/;\s*(cat|ls|id|whoami)/"; sid:2004;)

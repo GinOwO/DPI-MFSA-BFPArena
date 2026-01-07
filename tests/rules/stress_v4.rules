@@ -1,0 +1,91 @@
+# Stress test rules for V2 vs V4 benchmarking
+# Mix of content+pcre rules (V4 benefits) and pcre-only rules (always-run)
+#
+# Attack categories: path traversal, SQL injection, XSS, command injection,
+# file access, protocol abuse, encoding evasion, web shells, info disclosure
+
+# --- Path traversal variants (content + pcre) ---
+alert tcp any any -> any 80 (content:"../"; pcre:"/\.\.\//"; sid:3001;)
+alert tcp any any -> any 80 (content:"..\\"; pcre:"/\.\.\\/"; sid:3002;)
+alert tcp any any -> any 80 (content:"%2e%2e"; nocase; pcre:"/%2e%2e/i"; sid:3003;)
+alert tcp any any -> any 80 (content:"....//"; pcre:"/\.\.\.\.\/\//"; sid:3004;)
+alert tcp any any -> any 80 (content:"/etc/"; pcre:"/\/etc\/(passwd|shadow|hosts)/"; sid:3005;)
+alert tcp any any -> any 80 (content:"/proc/"; pcre:"/\/proc\/self\/(environ|cmdline)/"; sid:3006;)
+alert tcp any any -> any 80 (content:"/var/log"; pcre:"/\/var\/log\/(auth|syslog|messages)/"; sid:3007;)
+alert tcp any any -> any 80 (content:"win.ini"; nocase; pcre:"/win\.ini/i"; sid:3008;)
+alert tcp any any -> any 80 (content:"boot.ini"; nocase; pcre:"/boot\.ini/i"; sid:3009;)
+alert tcp any any -> any 80 (content:"web.config"; nocase; pcre:"/web\.config/i"; sid:3010;)
+
+# --- SQL injection variants (content + pcre) ---
+alert tcp any any -> any 80 (content:"SELECT"; nocase; pcre:"/UNION\s+SELECT/i"; sid:3011;)
+alert tcp any any -> any 80 (content:"SELECT"; nocase; pcre:"/SELECT\s+.*\s+FROM\s+information_schema/i"; sid:3012;)
+alert tcp any any -> any 80 (content:"DROP"; nocase; pcre:"/DROP\s+(TABLE|DATABASE)/i"; sid:3013;)
+alert tcp any any -> any 80 (content:"INSERT"; nocase; pcre:"/INSERT\s+INTO\s+/i"; sid:3014;)
+alert tcp any any -> any 80 (content:"UPDATE"; nocase; pcre:"/UPDATE\s+.*\s+SET\s+/i"; sid:3015;)
+alert tcp any any -> any 80 (content:"DELETE"; nocase; pcre:"/DELETE\s+FROM\s+/i"; sid:3016;)
+alert tcp any any -> any 80 (content:"EXEC"; nocase; pcre:"/EXEC(UTE)?\s+(xp_|sp_)/i"; sid:3017;)
+alert tcp any any -> any 80 (content:"xp_cmdshell"; nocase; pcre:"/xp_cmdshell/i"; sid:3018;)
+alert tcp any any -> any 80 (content:"WAITFOR"; nocase; pcre:"/WAITFOR\s+DELAY/i"; sid:3019;)
+alert tcp any any -> any 80 (content:"BENCHMARK"; nocase; pcre:"/BENCHMARK\s*\(/i"; sid:3020;)
+alert tcp any any -> any 80 (content:"SLEEP"; nocase; pcre:"/SLEEP\s*\(\s*\d+\s*\)/i"; sid:3021;)
+alert tcp any any -> any 80 (content:"' OR"; nocase; pcre:"/'\s*(OR|AND)\s+.*[=<>]/i"; sid:3022;)
+alert tcp any any -> any 80 (content:"1=1"; pcre:"/(\d)\s*=\s*\1/"; sid:3023;)
+alert tcp any any -> any 80 (content:"CONCAT"; nocase; pcre:"/CONCAT\s*\(/i"; sid:3024;)
+alert tcp any any -> any 80 (content:"CHAR("; nocase; pcre:"/CHAR\s*\(\s*\d+/i"; sid:3025;)
+
+# --- XSS variants (content + pcre) ---
+alert tcp any any -> any 80 (content:"<script"; pcre:"/<script[^>]*>/i"; sid:3026;)
+alert tcp any any -> any 80 (content:"javascript:"; nocase; pcre:"/javascript\s*:/i"; sid:3027;)
+alert tcp any any -> any 80 (content:"onerror"; nocase; pcre:"/on(error|load|click|mouseover)\s*=/i"; sid:3028;)
+alert tcp any any -> any 80 (content:"<iframe"; nocase; pcre:"/<iframe[^>]*src/i"; sid:3029;)
+alert tcp any any -> any 80 (content:"<img"; nocase; pcre:"/<img[^>]+onerror/i"; sid:3030;)
+alert tcp any any -> any 80 (content:"<svg"; nocase; pcre:"/<svg[^>]+onload/i"; sid:3031;)
+alert tcp any any -> any 80 (content:"document.cookie"; pcre:"/document\.cookie/"; sid:3032;)
+alert tcp any any -> any 80 (content:"alert("; pcre:"/alert\s*\(/"; sid:3033;)
+alert tcp any any -> any 80 (content:"eval("; pcre:"/eval\s*\(/"; sid:3034;)
+alert tcp any any -> any 80 (content:"<object"; nocase; pcre:"/<object[^>]*data/i"; sid:3035;)
+
+# --- Command injection (content + pcre) ---
+alert tcp any any -> any 80 (content:"cmd.exe"; nocase; pcre:"/cmd\.exe/i"; sid:3036;)
+alert tcp any any -> any 80 (content:"/bin/sh"; pcre:"/\/bin\/(sh|bash|csh|ksh)/"; sid:3037;)
+alert tcp any any -> any 80 (content:"wget "; pcre:"/wget\s+http/"; sid:3038;)
+alert tcp any any -> any 80 (content:"curl "; pcre:"/curl\s+(-[a-zA-Z]\s+)*http/"; sid:3039;)
+alert tcp any any -> any 80 (content:"chmod "; pcre:"/chmod\s+[0-7]{3,4}/"; sid:3040;)
+alert tcp any any -> any 80 (content:"chown "; pcre:"/chown\s+\w+/"; sid:3041;)
+alert tcp any any -> any 80 (content:"nc -e"; pcre:"/nc\s+.*-e\s+/"; sid:3042;)
+alert tcp any any -> any 80 (content:"python -c"; pcre:"/python[23]?\s+-c/"; sid:3043;)
+alert tcp any any -> any 80 (content:"perl -e"; pcre:"/perl\s+-e/"; sid:3044;)
+alert tcp any any -> any 80 (content:"ruby -e"; pcre:"/ruby\s+-e/"; sid:3045;)
+
+# --- Web shell / backdoor detection (content + pcre) ---
+alert tcp any any -> any 80 (content:"passthru("; nocase; pcre:"/passthru\s*\(/i"; sid:3046;)
+alert tcp any any -> any 80 (content:"system("; pcre:"/system\s*\(/"; sid:3047;)
+alert tcp any any -> any 80 (content:"shell_exec"; nocase; pcre:"/shell_exec\s*\(/i"; sid:3048;)
+alert tcp any any -> any 80 (content:"proc_open"; nocase; pcre:"/proc_open\s*\(/i"; sid:3049;)
+alert tcp any any -> any 80 (content:"popen("; pcre:"/popen\s*\(/"; sid:3050;)
+alert tcp any any -> any 80 (content:"base64_decode"; nocase; pcre:"/base64_decode\s*\(/i"; sid:3051;)
+alert tcp any any -> any 80 (content:"phpinfo()"; nocase; pcre:"/phpinfo\s*\(\s*\)/i"; sid:3052;)
+alert tcp any any -> any 80 (content:"exec("; pcre:"/\bexec\s*\(/"; sid:3053;)
+
+# --- Protocol / encoding abuse (content + pcre) ---
+alert tcp any any -> any 80 (content:"%00"; pcre:"/%00/"; sid:3054;)
+alert tcp any any -> any 80 (content:"%0d%0a"; nocase; pcre:"/%0[dD]%0[aA]/i"; sid:3055;)
+alert tcp any any -> any 80 (content:"&#x"; pcre:"/&#x[0-9a-fA-F]+;/"; sid:3056;)
+alert tcp any any -> any 80 (content:"\\u00"; pcre:"/\\\\u00[0-9a-fA-F]{2}/"; sid:3057;)
+alert tcp any any -> any 80 (content:"data:text"; nocase; pcre:"/data:text\/(html|javascript)/i"; sid:3058;)
+
+# --- Info disclosure / recon (content + pcre) ---
+alert tcp any any -> any 80 (content:"Server:"; pcre:"/Server:\s*(Apache|nginx|IIS)/"; sid:3059;)
+alert tcp any any -> any 80 (content:"X-Powered-By"; pcre:"/X-Powered-By:\s*(PHP|ASP)/"; sid:3060;)
+alert tcp any any -> any 80 (content:".git/"; pcre:"/\.git\/(HEAD|config|index)/"; sid:3061;)
+alert tcp any any -> any 80 (content:".env"; pcre:"/\.env(\s|$|\/)/"; sid:3062;)
+alert tcp any any -> any 80 (content:".htaccess"; pcre:"/\.htaccess/"; sid:3063;)
+alert tcp any any -> any 80 (content:"wp-config"; nocase; pcre:"/wp-config\.php/i"; sid:3064;)
+alert tcp any any -> any 80 (content:"phpMyAdmin"; nocase; pcre:"/phpMyAdmin/i"; sid:3065;)
+
+# --- PCRE-only rules (always-run in V4, tests overhead) ---
+alert tcp any any -> any any (pcre:"/;\s*(cat|ls|id|whoami|uname)/"; sid:3066;)
+alert tcp any any -> any any (pcre:"/\|\s*(cat|ls|id|whoami|uname)/"; sid:3067;)
+alert tcp any any -> any any (pcre:"/`[^`]*(cat|ls|id|whoami)`/"; sid:3068;)
+alert tcp any any -> any any (pcre:"/\$\([^)]*\)/"; sid:3069;)
+alert tcp any any -> any any (pcre:"/['\"].*['\"].*['\"].*['\"].*['\"].*['\"]/"; sid:3070;)

@@ -1,0 +1,48 @@
+# Build
+build/
+*.o
+*.obj
+*.a
+*.so
+*.dylib
+*.exe
+*.out
+
+# BPF artifacts
+*.bpf.o
+*.skel.h
+include/vmlinux.h
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+compile_commands.json
+
+# Debug
+*.d
+*.dwo
+*.pdb
+*.ilk
+*.gch
+*.pch
+
+# Benchmark results and generated data
+perf_tests/results/
+perf_tests/traffic/
+
+# Instance config (copy .env.example to .env)
+.env
+
+# System
+.DS_Store
+Thumbs.db
+
+# Arena headers (alloc not used directly)
+include/bpf_arena_alloc.h
+
+# Downloaded rulesets (raw .rules files)
+vendor/et-open/rules/
+.venv/

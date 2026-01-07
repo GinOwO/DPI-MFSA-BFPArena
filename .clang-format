@@ -1,0 +1,53 @@
+---
+Language: C
+BasedOnStyle: LLVM
+IndentWidth: 8
+UseTab: Always
+TabWidth: 8
+ColumnLimit: 80
+PointerAlignment: Right
+AlignAfterOpenBracket: Align
+AlignConsecutiveMacros: true
+AlignEscapedNewlines: Left
+AlignOperands: true
+AlignTrailingComments: true
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+BraceWrapping:
+  AfterFunction: true
+  AfterStruct: false
+  AfterEnum: false
+  AfterUnion: false
+  AfterControlStatement: Never
+  BeforeElse: false
+BreakBeforeBraces: Custom
+SpaceBeforeParens: ControlStatementsExceptForEachMacros
+IncludeBlocks: Preserve
+SortIncludes: Never
+SpacesInParentheses: false
+SpaceAfterCStyleCast: false
+MaxEmptyLinesToKeep: 1
+---
+Language: Cpp
+BasedOnStyle: LLVM
+IndentWidth: 8
+UseTab: Always
+TabWidth: 8
+ColumnLimit: 80
+PointerAlignment: Right
+BraceWrapping:
+  AfterFunction: true
+  AfterStruct: false
+  AfterEnum: false
+  AfterUnion: false
+  AfterNamespace: false
+  AfterClass: false
+  AfterControlStatement: Never
+  BeforeElse: false
+BreakBeforeBraces: Custom
+SpaceBeforeParens: ControlStatementsExceptForEachMacros
+SortIncludes: Never
+MaxEmptyLinesToKeep: 1

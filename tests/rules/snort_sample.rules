@@ -1,0 +1,18 @@
+# Sample Snort-style rules for ZDPI testing
+# Path traversal
+alert tcp any any -> any 80 (pcre:"/\.\.\//"; sid:1001;)
+
+# /etc/passwd access
+alert tcp any any -> any 80 (pcre:"/etc\/passwd/"; sid:1002;)
+
+# Windows command execution
+alert tcp any any -> any 80 (pcre:"/cmd\.exe/"; sid:1003;)
+
+# SQL injection (basic UNION)
+alert tcp any any -> any any (pcre:"/UNION\s+SELECT/"; sid:1004;)
+
+# XSS script tag
+alert tcp any any -> any 80 (pcre:"/<script/"; sid:1005;)
+
+# Shell command injection
+alert tcp any any -> any any (pcre:"/;\s*(cat|ls|id|whoami)/"; sid:1006;)

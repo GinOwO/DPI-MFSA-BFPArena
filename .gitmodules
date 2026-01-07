@@ -1,0 +1,6 @@
+[submodule "vendor/suricata-rules"]
+	path = vendor/suricata-rules
+	url = https://github.com/al0ne/suricata-rules.git
+[submodule "vendor/daffainfo-rules"]
+	path = vendor/daffainfo-rules
+	url = https://github.com/daffainfo/suricata-rules.git
