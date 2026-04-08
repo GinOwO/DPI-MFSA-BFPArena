@@ -1,4 +1,4 @@
-# ZDPI Zero-Copy Deep Packet Inspection
+# ZDPI: Zero-Copy Deep Packet Inspection
 
 eBPF/XDP-based DPI engine using BPF Arena for zero-copy packet inspection.
 Implements a two-stage pipeline: Aho-Corasick pre-filter (Stage 1) + MFSA parallel DFA traversal (Stage 2).
